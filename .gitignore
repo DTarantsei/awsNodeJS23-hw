@@ -1,0 +1,10 @@
+# package directories
+node_modules
+.esbuild
+
+# idea
+.idea
+
+# Serverless directories
+.serverless
+
