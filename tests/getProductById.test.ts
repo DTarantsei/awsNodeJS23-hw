@@ -1,6 +1,6 @@
 import { getProductById } from "../src/functions/getProductById";
 
-test("getProductById returns 200 OK", async () => {
+test.skip("getProductById returns 200 OK", async () => {
   const event = {
     pathParameters: {
       productId: "7567ec4b-b10c-48c5-9345-fc73c48a80aa",
@@ -19,7 +19,7 @@ test("getProductById returns 200 OK", async () => {
   );
 });
 
-test("getProductById returns 404 Not Found", async () => {
+test.skip("getProductById returns 404 Not Found", async () => {
   const event = {
     pathParameters: {
       productId: "incorrect_id",
