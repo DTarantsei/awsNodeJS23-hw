@@ -2,6 +2,7 @@
   "name": "awsNodeJS23-hw",
   "version": "1.0.0",
   "scripts": {
+    "test": "jest",
     "remove": "sls remove",
     "deploy": "sls deploy",
     "deploy:prod": "sls deploy --stage production"
@@ -10,9 +11,13 @@
     "typescript": "^3.5.3"
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0",
+    "@types/jest": "^24.0.15",
     "esbuild": "^0.14.25",
-    "axios": "^0.19.0",
-    "serverless-esbuild": "^1.25.0"
+    "jest": "^24.8.0",
+    "prettier": "^2.8.7",
+    "serverless-esbuild": "^1.25.0",
+    "serverless-plugin-typescript": "^2.1.4",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.18.0"
   }
 }

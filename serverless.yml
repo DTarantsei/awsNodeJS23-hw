@@ -1,0 +1,27 @@
+service: my-ds-store-app-back
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+  profile: sandx
+  httpApi:
+    cors: true
+
+functions:
+  getProductById:
+    handler: src/functions/getProductById.getProductById
+    events:
+      - httpApi:
+          path: /products/{productId}
+          method: get
+  getProducts:
+    handler: src/functions/getProducts.getProducts
+    events:
+      - httpApi:
+          path: /products
+          method: get
+
+plugins:
+  - serverless-esbuild
