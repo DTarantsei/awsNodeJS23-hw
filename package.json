@@ -8,10 +8,13 @@
     "deploy:prod": "sls deploy --stage production"
   },
   "dependencies": {
-    "typescript": "^3.5.3"
+    "aws-sdk": "^2.1353.0",
+    "typescript": "^3.5.3",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.15",
+    "aws-sdk-client-mock": "^2.1.1",
     "esbuild": "^0.14.25",
     "jest": "^24.8.0",
     "prettier": "^2.8.7",
