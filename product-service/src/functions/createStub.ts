@@ -1,9 +1,9 @@
 import { DynamoDB } from "aws-sdk";
-import { products, stocks } from "../mocks/constants";
+import { products, stocks } from "../../../mocks/constants";
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
-export async function putMockData() {
+export async function createStub() {
   try {
     return Promise.all([
       ...products.map((product) =>
