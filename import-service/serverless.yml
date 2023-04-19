@@ -1,0 +1,60 @@
+service: my-ds-store-app-back-imports
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+  profile: sandx
+  environment:
+    BUCKET: dts-uploaded-bucket
+  httpApi:
+    cors: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:ListBucket
+          Resource: "arn:aws:s3:::${self:provider.environment.BUCKET}"
+        - Effect: Allow
+          Action:
+            - s3:*
+          Resource: "arn:aws:s3:::${self:provider.environment.BUCKET}/*"
+
+functions:
+  importFileParser:
+    handler: src/functions/importFileParser.importFileParser
+    events:
+      - s3:
+          bucket: ${self:provider.environment.BUCKET}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+          existing: true
+  importProductsFile:
+    handler: src/functions/importProductsFile.importProductsFile
+    events:
+      - httpApi:
+          path: /import
+          method: get
+
+resources:
+  Resources:
+    importServiceBucket:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: ${self:provider.environment.BUCKET}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedMethods:
+                - GET
+                - POST
+                - PUT
+              AllowedHeaders:
+                - "*"
+              AllowedOrigins:
+                - "*"
+
+plugins:
+  - serverless-esbuild

@@ -1,5 +1,5 @@
 import { getProducts } from "../src/functions/getProducts";
-import { products } from "../src/mocks/constants";
+import { products } from "../../mocks/constants";
 
 test.skip("getProducts returns 200 OK", async () => {
   const result = await getProducts();

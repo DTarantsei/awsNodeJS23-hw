@@ -1,4 +1,4 @@
-service: my-ds-store-app-back
+service: my-ds-store-app-back-products
 frameworkVersion: '3'
 
 provider:
@@ -52,11 +52,11 @@ functions:
       - httpApi:
           path: /products
           method: post
-  putMockData:
-    handler: src/functions/putMockData.putMockData
+  createStub:
+    handler: src/functions/createStub.createStub
     events:
       - httpApi:
-          path: /create-mock
+          path: /create-stub
           method: put
 
 resources:
