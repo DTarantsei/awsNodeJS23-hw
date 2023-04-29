@@ -8,6 +8,7 @@ provider:
   profile: sandx
   environment:
     BUCKET: dts-uploaded-bucket
+    SQS_URL: ${cf:my-ds-store-app-back-products-dev.productsSQSQueueSharedURL}
   httpApi:
     cors: true
   iam:
@@ -21,7 +22,10 @@ provider:
           Action:
             - s3:*
           Resource: "arn:aws:s3:::${self:provider.environment.BUCKET}/*"
-
+        - Effect: Allow
+          Action:
+            - sqs:*
+          Resource: "*"
 functions:
   importFileParser:
     handler: src/functions/importFileParser.importFileParser

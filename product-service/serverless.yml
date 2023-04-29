@@ -9,6 +9,10 @@ provider:
   environment:
     PRODUCT_TABLE_NAME: products
     STOCK_TABLE_NAME: stocks
+    SNS_REF:
+      Ref: createProductTopic
+    SQS_URL:
+      Ref: productsSQSQueue
   httpApi:
     cors: true
   iam:
@@ -32,6 +36,14 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource: "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.STOCK_TABLE_NAME}"
+        - Effect: Allow
+          Action:
+            - sqs:*
+          Resource:
+            Fn::GetAtt: [productsSQSQueue, Arn]
+        - Effect: Allow
+          Action: sns:*
+          Resource: "*"
 
 functions:
   getProductById:
@@ -58,9 +70,41 @@ functions:
       - httpApi:
           path: /create-stub
           method: put
+  catalogBatchProcess:
+    handler: src/functions/catalogBatchProcess.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt: [productsSQSQueue, Arn]
 
 resources:
   Resources:
+    productsSQSQueue:
+      Type: 'AWS::SQS::Queue'
+      Properties:
+        QueueName: productsSQSQueue
+    createProductTopic:
+      Type: 'AWS::SNS::Topic'
+      Properties:
+        TopicName: createProductTopic
+    createProductTopicSubscriber:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        TopicArn:
+          Ref: createProductTopic
+        Endpoint: daniil_tarantsei@epam.com
+        Protocol: email
+    createProductTopicFailedSubscriber:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        TopicArn:
+          Ref: createProductTopic
+        Endpoint: danlife100@gmail.com
+        Protocol: email
+        FilterPolicyScope: MessageBody
+        FilterPolicy:
+          status: [ "Failed" ]
     productDBDynamo:
       Type: 'AWS::DynamoDB::Table'
       DeletionPolicy: Retain
@@ -87,6 +131,11 @@ resources:
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.STOCK_TABLE_NAME}
+  Outputs:
+    productsSQSQueueSharedURL:
+      Value: { Ref: productsSQSQueue }
+      Export:
+        Name: productsSQSQueueSharedURL
 
 plugins:
   - serverless-esbuild
