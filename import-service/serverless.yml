@@ -26,6 +26,7 @@ provider:
           Action:
             - sqs:*
           Resource: "*"
+
 functions:
   importFileParser:
     handler: src/functions/importFileParser.importFileParser
