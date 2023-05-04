@@ -1,27 +1,23 @@
 import { DynamoDB } from "aws-sdk";
-import { v4 as uuid } from "uuid";
 
-const dynamoDb = new DynamoDB.DocumentClient();
+import { prepareProductData } from "../utils/prepareProductData";
 
 export async function createProduct(event) {
+  const dynamoDb = new DynamoDB.DocumentClient();
+
   console.log(`createProduct event: ${event}`);
 
   try {
     const data = JSON.parse(event.body);
 
-    const { title, description = "", price = 0, count } = data;
+    const preparedData = prepareProductData(data);
 
-    if (typeof data.title !== "string" || !price || !count) {
-      console.error("Validation Failed");
-
-      return {
-        statusCode: 400,
-        headers: { "Content-Type": "text/plain" },
-        body: "Couldn't create the product item.",
-      };
+    if (preparedData?.error) {
+      return preparedData.error;
     }
 
-    const newProductId = uuid();
+    const { title, description, price, id: newProductId, count } = preparedData;
+
     const productParams = {
       TableName: process.env.PRODUCT_TABLE_NAME,
       Item: {

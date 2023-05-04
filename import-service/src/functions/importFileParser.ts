@@ -1,7 +1,8 @@
 import csv = require("csv-parser");
-import { S3 } from "aws-sdk";
+import { S3, SQS } from "aws-sdk";
 
 export async function importFileParser(event) {
+  const sqs = new SQS({ region: "us-east-1" });
   const s3 = new S3({ signatureVersion: "v4", region: "us-east-1" });
 
   try {
@@ -17,7 +18,23 @@ export async function importFileParser(event) {
     const processCsvPromise = new Promise((resolve) => {
       s3Stream
         .pipe(csv())
-        .on("data", (data) => console.log(data))
+        .on("data", (data) => {
+          const body = JSON.stringify(data);
+
+          sqs.sendMessage(
+            {
+              MessageBody: body,
+              QueueUrl: process.env.SQS_URL,
+            },
+            (err) => {
+              if (err) {
+                console.log("AWS Error: " + err);
+              } else {
+                console.log("Send message result: " + body);
+              }
+            }
+          );
+        })
         .on("end", async () => {
           await s3
             .copyObject({
