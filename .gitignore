@@ -2,6 +2,7 @@
 node_modules
 .esbuild
 .build
+.env
 
 # idea
 .idea

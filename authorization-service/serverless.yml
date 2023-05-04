@@ -1,0 +1,22 @@
+service: my-ds-store-app-back-authorization
+frameworkVersion: '3'
+
+useDotenv: true
+
+custom:
+  dotenv:
+    path: ../.env
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+  profile: sandx
+
+functions:
+  basicAuthorizer:
+    handler: src/functions/basicAuthorizer.basicAuthorizer
+
+plugins:
+  - serverless-esbuild
+  - serverless-dotenv-plugin
