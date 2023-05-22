@@ -4,3 +4,6 @@ services:
 
   import:
     path: import-service
+
+  authorization:
+    path: authorization-service
